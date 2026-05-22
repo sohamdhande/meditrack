@@ -28,6 +28,28 @@ yarn-error.log*
 .env
 .env*.local
 
+# Prisma
+prisma/*.db
+prisma/*.db-journal
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Netlify
+.netlify/
+.netlify/state.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env.local
+.env.*.local
+
 # vercel
 .vercel
 
