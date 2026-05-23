@@ -1,0 +1,92 @@
+#!/bin/bash
+set -e
+
+echo "🚀 MediTrack Deployment Guide"
+echo "============================="
+echo ""
+echo "This script helps you deploy MediTrack to production."
+echo ""
+
+# Step 1: GitHub Setup
+echo "📌 STEP 1: Set Up GitHub Repository"
+echo "===================================="
+echo ""
+echo "If you don't have a GitHub repo yet, create one:"
+echo "1. Go to https://github.com/new"
+echo "2. Create a public repository named 'meditrack'"
+echo "3. Copy the HTTPS URL (e.g., https://github.com/yourusername/meditrack.git)"
+echo ""
+echo "Then link your local project:"
+echo ""
+echo "  git remote add origin https://github.com/YOUR-USERNAME/meditrack.git"
+echo "  git branch -M main"
+echo "  git push -u origin main"
+echo ""
+
+# Step 2: Neon PostgreSQL Setup
+echo "📌 STEP 2: Set Up Neon PostgreSQL Database"
+echo "=========================================="
+echo ""
+echo "1. Go to https://console.neon.tech"
+echo "2. Sign up or log in"
+echo "3. Create a new project"
+echo "4. Copy your connection string (looks like:)"
+echo "   postgresql://user:password@ep-xxxxx.neon.tech/dbname?sslmode=require"
+echo ""
+
+# Step 3: Generate Auth Secret
+echo "📌 STEP 3: Generate AUTH_SECRET"
+echo "==============================="
+echo ""
+AUTH_SECRET=$(openssl rand -base64 32)
+echo "Your generated AUTH_SECRET:"
+echo "$AUTH_SECRET"
+echo ""
+
+# Step 4: Vercel Setup
+echo "📌 STEP 4: Deploy to Vercel"
+echo "=========================="
+echo ""
+echo "Install Vercel CLI:"
+echo "  npm install -g vercel"
+echo ""
+echo "Then deploy (make sure you're in the project directory):"
+echo "  vercel"
+echo ""
+echo "When prompted, add these environment variables:"
+echo ""
+echo "  DATABASE_URL = <your-neon-connection-string>"
+echo "  AUTH_SECRET = $AUTH_SECRET"
+echo "  NEXTAUTH_URL = <your-vercel-url>.vercel.app"
+echo ""
+
+# Step 5: Verification
+echo "📌 STEP 5: Verify Deployment"
+echo "==========================="
+echo ""
+echo "After deployment, test the API:"
+echo ""
+echo "  # Check if the app is live"
+echo "  curl https://your-app.vercel.app"
+echo ""
+echo "  # Test the patient record endpoint"
+echo "  curl https://your-app.vercel.app/api/records/REC-10041"
+echo ""
+echo "  # You should get a 401 response (Unauthorized)"
+echo "  # This means the API is working!"
+echo ""
+
+# Step 6: VibeAudit Configuration
+echo "📌 STEP 6: Configure VibeAudit"
+echo "============================="
+echo ""
+echo "1. Set VibeAudit target URL to your Vercel deployment"
+echo "2. Configure authentication with demo credentials:"
+echo "   Email: james@meditrack.app"
+echo "   Password: patient123"
+echo ""
+echo "3. VibeAudit will scan the vulnerable endpoints"
+echo ""
+
+echo "✅ Deployment steps complete!"
+echo ""
