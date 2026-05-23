@@ -7,32 +7,28 @@ async function main() {
   console.log('🌱 Seeding MediTrack database...');
 
   try {
-    // Check if data already exists
-    const existingUsers = await prisma.user.count();
-    if (existingUsers > 0) {
-      console.log('✅ Database already seeded, skipping...');
-      return;
-    }
-
-    // Delete existing data
+    // Always delete and recreate for deterministic state
     await prisma.patientRecord.deleteMany();
     await prisma.user.deleteMany();
+    console.log('🗑️  Cleared existing data');
 
     // Create victim user
+    const jamesPassword = await bcrypt.hash('password123', 10);
     const james = await prisma.user.create({
       data: {
-        email: '11@med.com',
-        password: await bcrypt.hash('123', 10),
+        email: 'james@meditrack.app',
+        password: jamesPassword,
         name: 'James Okafor',
       },
     });
     console.log(`✅ Created victim user: ${james.email}`);
 
     // Create attacker user
+    const attackerPassword = await bcrypt.hash('password123', 10);
     const attacker = await prisma.user.create({
       data: {
-        email: '22@med.com',
-        password: await bcrypt.hash('2222', 10),
+        email: 'attacker@meditrack.app',
+        password: attackerPassword,
         name: 'Attacker User',
       },
     });
@@ -53,9 +49,11 @@ async function main() {
         notes: 'Patient requested records not be shared with employer.',
       },
     });
-    console.log(`✅ Created patient record: ${record.recordId}`);
+    console.log(`✅ Inserted demo medical record: ${record.recordId}`);
 
-    console.log('🌱 Seeding complete!');
+    console.log('\n� Seeding complete! Demo credentials:');
+    console.log('Victim: james@meditrack.app / password123');
+    console.log('Attacker: attacker@meditrack.app / password123\n');
   } catch (error) {
     console.error('❌ Seeding failed:', error);
     process.exit(1);
