@@ -18,21 +18,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // Lazy import Prisma only when actually needed
         const { prisma } = await import('@/lib/prisma');
 
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          console.log('❌ Auth: Missing email or password');
+          return null;
+        }
 
+        console.log(`🔍 Auth: Looking up user: ${credentials.email}`);
         const user = await prisma.user.findUnique({
           where: { email: credentials.email as string },
         });
 
-        if (!user) return null;
+        if (!user) {
+          console.log(`❌ Auth: User not found: ${credentials.email}`);
+          return null;
+        }
+
+        console.log(`✅ Auth: User found: ${user.email}`);
+        console.log(`🔐 Auth: Comparing passwords...`);
 
         const passwordMatch = await bcrypt.compare(
           credentials.password as string,
           user.password
         );
 
-        if (!passwordMatch) return null;
+        console.log(`🔐 Auth: Password match result: ${passwordMatch}`);
 
+        if (!passwordMatch) {
+          console.log(`❌ Auth: Password mismatch for ${credentials.email}`);
+          return null;
+        }
+
+        console.log(`✅ Auth: Authentication successful for ${credentials.email}`);
         return {
           id: user.id,
           email: user.email,
