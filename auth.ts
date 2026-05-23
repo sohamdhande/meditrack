@@ -4,7 +4,6 @@ import Credentials from 'next-auth/providers/credentials';
 // Runtime validation — log env state on cold start
 console.log("[AUTH_ENV]", {
   AUTH_SECRET: !!process.env.AUTH_SECRET,
-  AUTH_URL: process.env.AUTH_URL,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   DATABASE_URL: !!process.env.DATABASE_URL,
 });
@@ -72,16 +71,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
+      console.log("[JWT_CALLBACK]", { token, user })
       if (user) {
-        token.id = user.id;
+        token.id = user.id
+        token.email = user.email
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
+      console.log("[SESSION_CALLBACK]", { session, token })
+      if (session.user) {
+        session.user.id = token.id as string
+        session.user.email = token.email as string
       }
-      return session;
-    },
+      return session
+    }
   },
 });
