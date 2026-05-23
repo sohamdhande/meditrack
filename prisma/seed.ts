@@ -9,16 +9,16 @@ async function main() {
 
   const james = await prisma.user.create({
     data: {
-      email: 'james@meditrack.app',
-      password: await bcrypt.hash('patient123', 10),
+      email: '11@med.com',
+      password: await bcrypt.hash('123', 10),
       name: 'James Okafor',
     },
   });
 
   await prisma.user.create({
     data: {
-      email: 'attacker@meditrack.app',
-      password: await bcrypt.hash('attacker123', 10),
+      email: '22@med.com',
+      password: await bcrypt.hash('2222', 10),
       name: 'Test User',
     },
   });
