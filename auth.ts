@@ -3,13 +3,8 @@ import Credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: 'jwt' },
-  pages: {
-    signIn: '/login',
-  },
   providers: [
     Credentials({
-      name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
@@ -34,7 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         console.log(`✅ Auth: User found: ${user.email}`);
-        console.log(`🔐 Auth: Comparing passwords...`);
+        console.log(`🔐 Auth: User password field: ${user.password ? 'EXISTS' : 'MISSING'}`);
 
         const passwordMatch = await bcrypt.compare(
           credentials.password as string,
@@ -58,19 +53,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-      }
-      return session;
+    authorized({ auth, request }) {
+      return !!auth;
     },
   },
+  pages: {
+    signIn: '/login',
+  },
+  session: { strategy: 'jwt' },
   basePath: '/api/auth',
   trustHost: true,
 });
